@@ -5,23 +5,39 @@ Object.defineProperty(exports, '__esModule', { value: true });
 class Store {
     constructor(dbName = 'keyval-store', storeName = 'keyval') {
         this.storeName = storeName;
+        this._dbName = dbName;
+        this._storeName = storeName;
+        this._init();
+    }
+    _init() {
+        if (this._dbp) {
+            return;
+        }
         this._dbp = new Promise((resolve, reject) => {
-            const openreq = indexedDB.open(dbName, 1);
+            const openreq = indexedDB.open(this._dbName, 1);
             openreq.onerror = () => reject(openreq.error);
             openreq.onsuccess = () => resolve(openreq.result);
             // First time setup: create an empty object store
             openreq.onupgradeneeded = () => {
-                openreq.result.createObjectStore(storeName);
+                openreq.result.createObjectStore(this._storeName);
             };
         });
     }
     _withIDBStore(type, callback) {
+        this._init();
         return this._dbp.then(db => new Promise((resolve, reject) => {
             const transaction = db.transaction(this.storeName, type);
             transaction.oncomplete = () => resolve();
             transaction.onabort = transaction.onerror = () => reject(transaction.error);
             callback(transaction.objectStore(this.storeName));
         }));
+    }
+    _close() {
+        this._init();
+        return this._dbp.then(db => {
+            db.close();
+            this._dbp = undefined;
+        });
     }
 }
 let store;
@@ -72,6 +88,9 @@ function keys(store = getDefaultStore()) {
         };
     }).then(() => keys);
 }
+function close(store = getDefaultStore()) {
+    return store._close();
+}
 
 exports.Store = Store;
 exports.get = get;
@@ -80,3 +99,4 @@ exports.update = update;
 exports.del = del;
 exports.clear = clear;
 exports.keys = keys;
+exports.close = close;
