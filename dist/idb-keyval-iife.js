@@ -47,7 +47,7 @@ function getDefaultStore() {
 }
 function get(key, store = getDefaultStore()) {
     let req;
-    return store._withIDBStore('readonly', store => {
+    return store._withIDBStore('readwrite', store => {
         req = store.get(key);
     }).then(() => req.result);
 }
@@ -76,7 +76,7 @@ function clear(store = getDefaultStore()) {
 }
 function keys(store = getDefaultStore()) {
     const keys = [];
-    return store._withIDBStore('readonly', store => {
+    return store._withIDBStore('readwrite', store => {
         // This would be store.getAllKeys(), but it isn't supported by Edge or Safari.
         // And openKeyCursor isn't supported by Safari.
         (store.openKeyCursor || store.openCursor).call(store).onsuccess = function () {

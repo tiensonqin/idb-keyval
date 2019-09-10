@@ -53,7 +53,7 @@ function getDefaultStore() {
 
 export function get<Type>(key: IDBValidKey, store = getDefaultStore()): Promise<Type> {
   let req: IDBRequest;
-  return store._withIDBStore('readonly', store => {
+  return store._withIDBStore('readwrite', store => {
     req = store.get(key);
   }).then(() => req.result);
 }
@@ -88,7 +88,7 @@ export function clear(store = getDefaultStore()): Promise<void> {
 export function keys(store = getDefaultStore()): Promise<IDBValidKey[]> {
   const keys: IDBValidKey[] = [];
 
-  return store._withIDBStore('readonly', store => {
+  return store._withIDBStore('readwrite', store => {
     // This would be store.getAllKeys(), but it isn't supported by Edge or Safari.
     // And openKeyCursor isn't supported by Safari.
     (store.openKeyCursor || store.openCursor).call(store).onsuccess = function() {

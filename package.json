@@ -1,5 +1,5 @@
 {
-    "name": "@wmhilton/idb-keyval",
+    "name": "@isomorphic-git/idb-keyval",
     "version": "3.3.0",
     "description": "A super-simple-small keyval store built on top of IndexedDB",
     "main": "./dist/idb-keyval-cjs.js",
@@ -14,7 +14,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/jakearchibald/idb-keyval.git"
+        "url": "git+https://github.com/isomorphic-git/idb-keyval.git"
     },
     "keywords": [
         "idb",
@@ -25,15 +25,11 @@
         "storage",
         "promise"
     ],
-    "author": "Jake Archibald",
-    "contributors": [
-        "Benny Powers"
-    ],
     "license": "Apache-2.0",
     "bugs": {
-        "url": "https://github.com/jakearchibald/idb-keyval/issues"
+        "url": "https://github.com/isomorphic-git/idb-keyval/issues"
     },
-    "homepage": "https://github.com/jakearchibald/idb-keyval#readme",
+    "homepage": "https://github.com/isomorphic-git/idb-keyval#readme",
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.6.1",
