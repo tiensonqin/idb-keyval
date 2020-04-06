@@ -14,7 +14,7 @@ export class Store {
       return;
     }
     this._dbp = new Promise((resolve, reject) => {
-      const openreq = indexedDB.open(this._dbName, 1);
+      const openreq = indexedDB.open(this._dbName);
       openreq.onerror = () => reject(openreq.error);
       openreq.onsuccess = () => resolve(openreq.result);
 
