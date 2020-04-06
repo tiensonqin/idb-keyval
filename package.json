@@ -1,9 +1,9 @@
 {
     "publishConfig": {
-      "access": "public"
+        "access": "public"
     },
     "name": "@isomorphic-git/idb-keyval",
-    "version": "3.3.1",
+    "version": "3.3.2",
     "description": "A super-simple-small keyval store built on top of IndexedDB",
     "main": "./dist/idb-keyval-cjs.js",
     "module": "./dist/idb-keyval.mjs",
