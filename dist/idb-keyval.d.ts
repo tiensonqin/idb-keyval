@@ -3,6 +3,7 @@ export declare class Store {
     private _dbp;
     readonly _dbName: string;
     readonly _storeName: string;
+    readonly id: string;
     constructor(dbName?: string, storeName?: string);
     _init(): void;
     _withIDBStore(type: IDBTransactionMode, callback: ((store: IDBObjectStore) => void)): Promise<void>;

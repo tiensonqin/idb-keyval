@@ -6,6 +6,7 @@ class Store {
         this.storeName = storeName;
         this._dbName = dbName;
         this._storeName = storeName;
+        this.id = `dbName:${dbName};;storeName:${storeName}`;
         this._init();
     }
     _init() {
@@ -39,6 +40,30 @@ class Store {
         });
     }
 }
+class Batcher {
+    constructor(executor) {
+        this.executor = executor;
+        this.items = [];
+    }
+    async process() {
+        const toProcess = this.items;
+        this.items = [];
+        await this.executor(toProcess.map(({ item }) => item));
+        toProcess.map(({ onProcessed }) => onProcessed());
+        if (this.items.length) {
+            this.ongoing = this.process();
+        }
+        else {
+            this.ongoing = undefined;
+        }
+    }
+    async queue(item) {
+        const result = new Promise((resolve) => this.items.push({ item, onProcessed: resolve }));
+        if (!this.ongoing)
+            this.ongoing = this.process();
+        return result;
+    }
+}
 let store;
 function getDefaultStore() {
     if (!store)
@@ -51,10 +76,16 @@ function get(key, store = getDefaultStore()) {
         req = store.get(key);
     }).then(() => req.result);
 }
+const setBatchers = {};
 function set(key, value, store = getDefaultStore()) {
-    return store._withIDBStore('readwrite', store => {
-        store.put(value, key);
-    });
+    if (!setBatchers[store.id]) {
+        setBatchers[store.id] = new Batcher((items) => store._withIDBStore('readwrite', store => {
+            for (const item of items) {
+                store.put(item.value, item.key);
+            }
+        }));
+    }
+    return setBatchers[store.id].queue({ key, value });
 }
 function update(key, updater, store = getDefaultStore()) {
     return store._withIDBStore('readwrite', store => {
